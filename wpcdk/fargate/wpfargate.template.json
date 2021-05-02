@@ -1,4 +1,6 @@
 {
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Some Fargate example template",
   "Resources": {
     "wpVpcA8D50091": {
       "Type": "AWS::EC2::VPC",

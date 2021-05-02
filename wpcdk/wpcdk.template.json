@@ -1,4 +1,6 @@
 {
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "WordPress CDK Template example",
   "Resources": {
     "vpcA2121C38": {
       "Type": "AWS::EC2::VPC",
