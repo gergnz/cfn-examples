@@ -1,0 +1,447 @@
+{
+  "Resources": {
+    "wpVpcA8D50091": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpfargate/wpVpc"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/Resource"
+      }
+    },
+    "wpVpcpublicSubnet1Subnet272153B8": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/24",
+        "VpcId": {
+          "Ref": "wpVpcA8D50091"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          },
+          {
+            "Key": "Name",
+            "Value": "wpfargate/wpVpc/publicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/publicSubnet1/Subnet"
+      }
+    },
+    "wpVpcpublicSubnet1RouteTableB392A5EA": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "wpVpcA8D50091"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpfargate/wpVpc/publicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/publicSubnet1/RouteTable"
+      }
+    },
+    "wpVpcpublicSubnet1RouteTableAssociationB5FEE328": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "wpVpcpublicSubnet1RouteTableB392A5EA"
+        },
+        "SubnetId": {
+          "Ref": "wpVpcpublicSubnet1Subnet272153B8"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/publicSubnet1/RouteTableAssociation"
+      }
+    },
+    "wpVpcpublicSubnet1DefaultRouteD86313E9": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "wpVpcpublicSubnet1RouteTableB392A5EA"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "wpVpcIGW32512D09"
+        }
+      },
+      "DependsOn": [
+        "wpVpcVPCGW3A2CD95F"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/publicSubnet1/DefaultRoute"
+      }
+    },
+    "wpVpcpublicSubnet2Subnet3D4A425B": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.1.0/24",
+        "VpcId": {
+          "Ref": "wpVpcA8D50091"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          },
+          {
+            "Key": "Name",
+            "Value": "wpfargate/wpVpc/publicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/publicSubnet2/Subnet"
+      }
+    },
+    "wpVpcpublicSubnet2RouteTable0691387C": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "wpVpcA8D50091"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpfargate/wpVpc/publicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/publicSubnet2/RouteTable"
+      }
+    },
+    "wpVpcpublicSubnet2RouteTableAssociation96B85239": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "wpVpcpublicSubnet2RouteTable0691387C"
+        },
+        "SubnetId": {
+          "Ref": "wpVpcpublicSubnet2Subnet3D4A425B"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/publicSubnet2/RouteTableAssociation"
+      }
+    },
+    "wpVpcpublicSubnet2DefaultRoute64714976": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "wpVpcpublicSubnet2RouteTable0691387C"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "wpVpcIGW32512D09"
+        }
+      },
+      "DependsOn": [
+        "wpVpcVPCGW3A2CD95F"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/publicSubnet2/DefaultRoute"
+      }
+    },
+    "wpVpcIGW32512D09": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpfargate/wpVpc"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/IGW"
+      }
+    },
+    "wpVpcVPCGW3A2CD95F": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "wpVpcA8D50091"
+        },
+        "InternetGatewayId": {
+          "Ref": "wpVpcIGW32512D09"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpVpc/VPCGW"
+      }
+    },
+    "wpTaskDefTaskRoleE0354BC3": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpTaskDef/TaskRole/Resource"
+      }
+    },
+    "wpTaskDef1046ABC3": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Essential": true,
+            "Image": "amazon/amazon-ecs-sample",
+            "Name": "wordpress",
+            "PortMappings": [
+              {
+                "ContainerPort": 80,
+                "Protocol": "tcp"
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "Family": "wpfargatewpTaskDefCDB7DC9E",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "wpTaskDefTaskRoleE0354BC3",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpTaskDef/Resource"
+      }
+    },
+    "wpClusterED234355": {
+      "Type": "AWS::ECS::Cluster",
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpCluster/Resource"
+      }
+    },
+    "wpFargateSGC87C54B2": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "wpfargate/wpFargateSG",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "from 0.0.0.0/0:80",
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "ToPort": 80
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "from 0.0.0.0/0:443",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443
+          }
+        ],
+        "VpcId": {
+          "Ref": "wpVpcA8D50091"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpFargateSG/Resource"
+      }
+    },
+    "wpFargateService850B9821": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "wpClusterED234355"
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50
+        },
+        "DesiredCount": 1,
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 60,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "wordpress",
+            "ContainerPort": 80,
+            "TargetGroupArn": {
+              "Ref": "wptargetgroup4B463AAE"
+            }
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "wpFargateSGC87C54B2",
+                  "GroupId"
+                ]
+              }
+            ],
+            "Subnets": [
+              {
+                "Ref": "wpVpcpublicSubnet1Subnet272153B8"
+              },
+              {
+                "Ref": "wpVpcpublicSubnet2Subnet3D4A425B"
+              }
+            ]
+          }
+        },
+        "TaskDefinition": {
+          "Ref": "wpTaskDef1046ABC3"
+        }
+      },
+      "DependsOn": [
+        "wpNLBhttp015B5132",
+        "wpNLBhttps68BA256F"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpFargateService/Service"
+      }
+    },
+    "wpNLBBED1245D": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Scheme": "internet-facing",
+        "Subnets": [
+          {
+            "Ref": "wpVpcpublicSubnet1Subnet272153B8"
+          },
+          {
+            "Ref": "wpVpcpublicSubnet2Subnet3D4A425B"
+          }
+        ],
+        "Type": "network"
+      },
+      "DependsOn": [
+        "wpVpcpublicSubnet1DefaultRouteD86313E9",
+        "wpVpcpublicSubnet2DefaultRoute64714976"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpNLB/Resource"
+      }
+    },
+    "wpNLBhttp015B5132": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "wptargetgroup4B463AAE"
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "wpNLBBED1245D"
+        },
+        "Port": 80,
+        "Protocol": "TCP"
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpNLB/http/Resource"
+      }
+    },
+    "wpNLBhttps68BA256F": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "wptargetgroup4B463AAE"
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "wpNLBBED1245D"
+        },
+        "Port": 443,
+        "Protocol": "TCP"
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wpNLB/https/Resource"
+      }
+    },
+    "wptargetgroup4B463AAE": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "Port": 80,
+        "Protocol": "TCP",
+        "TargetType": "ip",
+        "VpcId": {
+          "Ref": "wpVpcA8D50091"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpfargate/wptargetgroup/Resource"
+      }
+    }
+  }
+}
