@@ -1,0 +1,911 @@
+{
+  "Resources": {
+    "vpcA2121C38": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpcdk/vpc"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/Resource"
+      }
+    },
+    "vpcPublicSubnet1Subnet2E65531E": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/18",
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          },
+          {
+            "Key": "Name",
+            "Value": "wpcdk/vpc/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/PublicSubnet1/Subnet"
+      }
+    },
+    "vpcPublicSubnet1RouteTable48A2DF9B": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpcdk/vpc/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/PublicSubnet1/RouteTable"
+      }
+    },
+    "vpcPublicSubnet1RouteTableAssociation5D3F4579": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "vpcPublicSubnet1RouteTable48A2DF9B"
+        },
+        "SubnetId": {
+          "Ref": "vpcPublicSubnet1Subnet2E65531E"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/PublicSubnet1/RouteTableAssociation"
+      }
+    },
+    "vpcPublicSubnet1DefaultRoute10708846": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "vpcPublicSubnet1RouteTable48A2DF9B"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "vpcIGWE57CBDCA"
+        }
+      },
+      "DependsOn": [
+        "vpcVPCGW7984C166"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/PublicSubnet1/DefaultRoute"
+      }
+    },
+    "vpcPublicSubnet2Subnet009B674F": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.64.0/18",
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          },
+          {
+            "Key": "Name",
+            "Value": "wpcdk/vpc/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/PublicSubnet2/Subnet"
+      }
+    },
+    "vpcPublicSubnet2RouteTableEB40D4CB": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpcdk/vpc/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/PublicSubnet2/RouteTable"
+      }
+    },
+    "vpcPublicSubnet2RouteTableAssociation21F81B59": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "vpcPublicSubnet2RouteTableEB40D4CB"
+        },
+        "SubnetId": {
+          "Ref": "vpcPublicSubnet2Subnet009B674F"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/PublicSubnet2/RouteTableAssociation"
+      }
+    },
+    "vpcPublicSubnet2DefaultRouteA1EC0F60": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "vpcPublicSubnet2RouteTableEB40D4CB"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "vpcIGWE57CBDCA"
+        }
+      },
+      "DependsOn": [
+        "vpcVPCGW7984C166"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/PublicSubnet2/DefaultRoute"
+      }
+    },
+    "vpcIsolatedSubnet1Subnet8B28CEB3": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.128.0/18",
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Isolated"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Isolated"
+          },
+          {
+            "Key": "Name",
+            "Value": "wpcdk/vpc/IsolatedSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/IsolatedSubnet1/Subnet"
+      }
+    },
+    "vpcIsolatedSubnet1RouteTable0D6B2D3D": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpcdk/vpc/IsolatedSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/IsolatedSubnet1/RouteTable"
+      }
+    },
+    "vpcIsolatedSubnet1RouteTableAssociation172210D4": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "vpcIsolatedSubnet1RouteTable0D6B2D3D"
+        },
+        "SubnetId": {
+          "Ref": "vpcIsolatedSubnet1Subnet8B28CEB3"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/IsolatedSubnet1/RouteTableAssociation"
+      }
+    },
+    "vpcIsolatedSubnet2Subnet2C6B375C": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.192.0/18",
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Isolated"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Isolated"
+          },
+          {
+            "Key": "Name",
+            "Value": "wpcdk/vpc/IsolatedSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/IsolatedSubnet2/Subnet"
+      }
+    },
+    "vpcIsolatedSubnet2RouteTable3455CBFC": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpcdk/vpc/IsolatedSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/IsolatedSubnet2/RouteTable"
+      }
+    },
+    "vpcIsolatedSubnet2RouteTableAssociation8A8FAF70": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "vpcIsolatedSubnet2RouteTable3455CBFC"
+        },
+        "SubnetId": {
+          "Ref": "vpcIsolatedSubnet2Subnet2C6B375C"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/IsolatedSubnet2/RouteTableAssociation"
+      }
+    },
+    "vpcIGWE57CBDCA": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpcdk/vpc"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/IGW"
+      }
+    },
+    "vpcVPCGW7984C166": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        },
+        "InternetGatewayId": {
+          "Ref": "vpcIGWE57CBDCA"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/vpc/VPCGW"
+      }
+    },
+    "dbSubnetGroup9730EA00": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "Subnet group for db database",
+        "SubnetIds": [
+          {
+            "Ref": "vpcIsolatedSubnet1Subnet8B28CEB3"
+          },
+          {
+            "Ref": "vpcIsolatedSubnet2Subnet2C6B375C"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/db/SubnetGroup/Default"
+      }
+    },
+    "dbSecurityGroup633AC648": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Security group for db database",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/db/SecurityGroup/Resource"
+      }
+    },
+    "dbSecurityGroupfromwpcdkappInstanceSecurityGroup19AE56763306CFD47C20": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "Description": "from wpcdkappInstanceSecurityGroup19AE5676:3306",
+        "FromPort": 3306,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "dbSecurityGroup633AC648",
+            "GroupId"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "appInstanceSecurityGroup2A99D910",
+            "GroupId"
+          ]
+        },
+        "ToPort": 3306
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/db/SecurityGroup/from wpcdkappInstanceSecurityGroup19AE5676:3306"
+      }
+    },
+    "dbSecret8003E3A7": {
+      "Type": "AWS::SecretsManager::Secret",
+      "Properties": {
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Generated by the CDK for stack: ",
+              {
+                "Ref": "AWS::StackName"
+              }
+            ]
+          ]
+        },
+        "GenerateSecretString": {
+          "ExcludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
+          "GenerateStringKey": "password",
+          "PasswordLength": 30,
+          "SecretStringTemplate": "{\"username\":\"admin\"}"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/db/Secret/Resource"
+      }
+    },
+    "dbSecretAttachment5D338442": {
+      "Type": "AWS::SecretsManager::SecretTargetAttachment",
+      "Properties": {
+        "SecretId": {
+          "Ref": "dbSecret8003E3A7"
+        },
+        "TargetId": {
+          "Ref": "dbECC37780"
+        },
+        "TargetType": "AWS::RDS::DBInstance"
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/db/Secret/Attachment/Resource"
+      }
+    },
+    "dbECC37780": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "DBInstanceClass": "db.r6g.large",
+        "AllocatedStorage": "100",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "CopyTagsToSnapshot": true,
+        "DBSubnetGroupName": {
+          "Ref": "dbSubnetGroup9730EA00"
+        },
+        "DeletionProtection": false,
+        "Engine": "mysql",
+        "EngineVersion": "8.0",
+        "MasterUsername": {
+          "Fn::Join": [
+            "",
+            [
+              "{{resolve:secretsmanager:",
+              {
+                "Ref": "dbSecret8003E3A7"
+              },
+              ":SecretString:username::}}"
+            ]
+          ]
+        },
+        "MasterUserPassword": {
+          "Fn::Join": [
+            "",
+            [
+              "{{resolve:secretsmanager:",
+              {
+                "Ref": "dbSecret8003E3A7"
+              },
+              ":SecretString:password::}}"
+            ]
+          ]
+        },
+        "PubliclyAccessible": false,
+        "StorageType": "gp2",
+        "VPCSecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "dbSecurityGroup633AC648",
+              "GroupId"
+            ]
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/db/Resource"
+      }
+    },
+    "appInstanceSecurityGroup2A99D910": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "wpcdk/app/InstanceSecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "from 0.0.0.0/0:22",
+            "FromPort": 22,
+            "IpProtocol": "tcp",
+            "ToPort": 22
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "from 0.0.0.0/0:80",
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "ToPort": 80
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpcdk/app"
+          }
+        ],
+        "VpcId": {
+          "Ref": "vpcA2121C38"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/app/InstanceSecurityGroup/Resource"
+      }
+    },
+    "appInstanceRoleDA866B93": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "ec2.",
+                      {
+                        "Ref": "AWS::URLSuffix"
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/AmazonSSMManagedInstanceCore"
+              ]
+            ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpcdk/app"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/app/InstanceRole/Resource"
+      }
+    },
+    "appInstanceRoleDefaultPolicy7E8A7D5C": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "secretsmanager:GetSecretValue",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "dbSecretAttachment5D338442"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "appInstanceRoleDefaultPolicy7E8A7D5C",
+        "Roles": [
+          {
+            "Ref": "appInstanceRoleDA866B93"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/app/InstanceRole/DefaultPolicy/Resource"
+      }
+    },
+    "appInstanceProfileF452F4E3": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "appInstanceRoleDA866B93"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/app/InstanceProfile"
+      }
+    },
+    "app735A5B5369f2671739877eec": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "IamInstanceProfile": {
+          "Ref": "appInstanceProfileF452F4E3"
+        },
+        "ImageId": {
+          "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmarm64gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+        },
+        "InstanceType": "c6g.large",
+        "KeyName": "gjc",
+        "Monitoring": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "appInstanceSecurityGroup2A99D910",
+              "GroupId"
+            ]
+          }
+        ],
+        "SubnetId": {
+          "Ref": "vpcPublicSubnet1Subnet2E65531E"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "wpcdk/app"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\n\nregion=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/[a-z]$//')\naws --region $region secretsmanager get-secret-value --secret-id ",
+                {
+                  "Ref": "dbSecretAttachment5D338442"
+                },
+                " >> /tmp/details\nyum install -y jq httpd mariadb\namazon-linux-extras install -y php7.2\nsystemctl enable httpd\nsystemctl start httpd\ncd /tmp; wget https://wordpress.org/latest.zip\ncd /var/www/html\nunzip /tmp/latest.zip\necho \"<?php\" > wordpress/wp-config.php\necho \"define( 'DB_NAME', 'wordpress' );\" >> wordpress/wp-config.php\necho \"define( 'DB_USER', '$(cat /tmp/details | jq -r '.SecretString' | jq -r '.username')' );\" >> wordpress/wp-config.php\necho \"define( 'DB_PASSWORD', '$(cat /tmp/details | jq -r '.SecretString' | jq -r '.password')' );\" >> wordpress/wp-config.php\necho \"define( 'DB_HOST', '$(cat /tmp/details | jq -r '.SecretString' | jq -r '.host')' );\" >> wordpress/wp-config.php\necho \"define( 'DB_CHARSET', 'utf8' );\" >> wordpress/wp-config.php\necho \"define( 'DB_COLLATE', '' );\" >> wordpress/wp-config.php\ncurl -s https://api.wordpress.org/secret-key/1.1/salt/ >> wordpress/wp-config.php\necho \"\\$table_prefix = 'wp_';\" >> wordpress/wp-config.php\necho \"define( 'WP_DEBUG', false );\" >> wordpress/wp-config.php\necho \"if ( ! defined( 'ABSPATH' ) ) {\" >> wordpress/wp-config.php\necho \"        define( 'ABSPATH', __DIR__ . '/' );\" >> wordpress/wp-config.php\necho \"}\" >> wordpress/wp-config.php\necho \"require_once ABSPATH . 'wp-settings.php';\" >> wordpress/wp-config.php\necho \"create database wordpress;\" | mysql -h$(cat /tmp/details | jq -r '.SecretString' | jq -r '.host') -u$(cat /tmp/details | jq -r '.SecretString' | jq -r '.username') -p$(cat /tmp/details| jq -r '.SecretString' | jq -r '.password')\ncurl \"http://$(curl http://ipv4.icanhazip.com)/wordpress/wp-admin/install.php?step=2\" --data-raw 'weblog_title=Wordpress&user_name=admin&admin_password=oKdy7%212cVumXZLzW8%29&admin_password2=oKdy7%212cVumXZLzW8%29&admin_email=admin%40example.com&blog_public=0&Submit=Install+WordPress&language='\n"
+              ]
+            ]
+          }
+        }
+      },
+      "DependsOn": [
+        "appInstanceRoleDefaultPolicy7E8A7D5C",
+        "appInstanceRoleDA866B93"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/app/Resource"
+      }
+    },
+    "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+        "Modules": "aws-cdk=1.74.0,@aws-cdk/assets=1.74.0,@aws-cdk/aws-applicationautoscaling=1.74.0,@aws-cdk/aws-autoscaling-common=1.74.0,@aws-cdk/aws-cloudwatch=1.74.0,@aws-cdk/aws-codeguruprofiler=1.74.0,@aws-cdk/aws-ec2=1.74.0,@aws-cdk/aws-efs=1.74.0,@aws-cdk/aws-events=1.74.0,@aws-cdk/aws-iam=1.74.0,@aws-cdk/aws-kms=1.74.0,@aws-cdk/aws-lambda=1.74.0,@aws-cdk/aws-logs=1.74.0,@aws-cdk/aws-rds=1.74.0,@aws-cdk/aws-s3=1.74.0,@aws-cdk/aws-s3-assets=1.74.0,@aws-cdk/aws-sam=1.74.0,@aws-cdk/aws-secretsmanager=1.74.0,@aws-cdk/aws-sqs=1.74.0,@aws-cdk/aws-ssm=1.74.0,@aws-cdk/cloud-assembly-schema=1.74.0,@aws-cdk/core=1.74.0,@aws-cdk/cx-api=1.74.0,@aws-cdk/region-info=1.74.0,jsii-runtime=Python/3.9.1"
+      },
+      "Metadata": {
+        "aws:cdk:path": "wpcdk/CDKMetadata/Default"
+      },
+      "Condition": "CDKMetadataAvailable"
+    }
+  },
+  "Parameters": {
+    "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmarm64gp2C96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+      "Default": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-arm64-gp2"
+    }
+  },
+  "Outputs": {
+    "output": {
+      "Description": "URL",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://",
+            {
+              "Fn::GetAtt": [
+                "app735A5B5369f2671739877eec",
+                "PublicIp"
+              ]
+            },
+            "/wordpress/"
+          ]
+        ]
+      }
+    }
+  },
+  "Conditions": {
+    "CDKMetadataAvailable": {
+      "Fn::Or": [
+        {
+          "Fn::Or": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-east-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-northeast-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-northeast-2"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-south-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-southeast-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-southeast-2"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ca-central-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "cn-north-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "cn-northwest-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-central-1"
+              ]
+            }
+          ]
+        },
+        {
+          "Fn::Or": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-north-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-west-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-west-2"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-west-3"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "me-south-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "sa-east-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-east-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-east-2"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-west-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-west-2"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

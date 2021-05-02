@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Metadata:
+  License: Apache-2.0
+Description: 'Allows staff to gain Administrative access to your AWS account.
+Save this file as admin_role.yaml
+Create the stack with: aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --stack-name Administration --template-file admin_role.yaml
+'
+Resources:
+  Role:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              AWS:
+                - "arn:aws:iam::123456789012:root"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": "put-a-uuid-here"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns: 
+        - "arn:aws:iam::aws:policy/AdministratorAccess"
+      MaxSessionDuration: 43200
+      RoleName: "Administration"
