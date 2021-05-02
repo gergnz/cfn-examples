@@ -1,0 +1,312 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters" : {
+    "SNSTopicArn" : {
+      "Type" : "String",
+      "Description" : "SNS Topic to send the Alert Notification"
+    },
+    "ExistingSG" : {
+      "Type" : "AWS::EC2::SecurityGroup::Id",
+      "Description" : "The Security Group ID for Lambda"
+    },
+    "ExistingSubnet" : {
+      "Type" : "AWS::EC2::Subnet::Id",
+      "Description" : "The Subnet ID for Lambda"
+    },
+    "ExistingSOLRQueryELB" : {
+      "Type" : "String",
+      "Description" : "SOLR Query Node ELB DNS Name"
+    },
+    "ExistingQueryASGName" : {
+      "Type" : "String",
+      "Description" : "SOLR Query Node ASG Name"
+    },
+    "SOLRMaster" : {
+      "Type" : "String",
+      "Default" : "master.solr-test.local"
+    },
+    "SolrTestSchedule":{
+      "Type": "String",
+      "Default": "5",
+      "Description" : "SOLR LifeCycle Test Schedule in Minutes"
+    },
+    "ReplicationDelay":{
+      "Type": "String",
+      "Default": "60",
+      "Description" : "SOLR Replication Delay in Seconds"
+    }
+  },
+  "Resources" : {
+    "LambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{ "Effect": "Allow", "Principal": {"Service": ["lambda.amazonaws.com"]}, "Action": ["sts:AssumeRole"] }]
+        },
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "SolrLifeCycleTestPolicy",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents",
+                  "ec2:CreateNetworkInterface",
+                  "ec2:DescribeNetworkInterfaces",
+                  "ec2:DeleteNetworkInterface"
+                ],
+                "Resource": "*"
+              },
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "sns:Publish"
+                ],
+                "Resource": "arn:aws:sns:*:*:*"
+              },
+              {
+                "Effect": "Allow",
+                "Action": "logs:CreateLogGroup",
+                "Resource": "arn:aws:logs:ap-southeast-2:*"
+              },
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+                ],
+                "Resource": [
+                  "arn:aws:logs:ap-southeast-2:*"
+                ]
+              },
+              {
+                "Effect": "Allow",
+                "Action": "ec2:Describe*",
+                "Resource": "*"
+              },
+              {
+                "Effect": "Allow",
+                "Action": "autoscaling:Describe*",
+                "Resource": "*"
+              }
+            ]
+          } 
+        }]
+      }
+    },
+    "StepFnExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{ "Effect": "Allow", "Principal": {"Service": ["states.amazonaws.com"]}, "Action": ["sts:AssumeRole"] }]
+        },
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "SolrLifeCycleTestStepPolicy",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": "states:*",
+                "Resource": "*"
+              },
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "lambda:InvokeFunction"
+                ],
+                "Resource": "*"
+              }
+            ]
+          }
+        }]
+      }
+    },
+    "CloudWatchEventRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{ "Effect": "Allow", "Principal": {"Service": ["events.amazonaws.com"]}, "Action": ["sts:AssumeRole"] }]
+        },
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "CloudWatchEventStepExecutionPolicy",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": "states:StartExecution",
+                "Resource": "*"
+              }
+            ]
+          }
+        }]
+      }
+    },
+    "SolrLifeCycleTest1": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaExecutionRole", 
+            "Arn"
+          ]
+        },
+        "Handler": "solrTestStep1.lambda_handler",
+        "FunctionName": "SolrLifeCycleTest1",
+        "Runtime": "python2.7",
+        "Timeout": "20",
+        "VpcConfig": {
+          "SecurityGroupIds": [{ "Ref" : "ExistingSG" }],
+          "SubnetIds": [{ "Ref": "ExistingSubnet"}]
+        },
+        "Code": {
+          "S3Bucket": "solrlifecycletest-assets",
+          "S3Key": "solrTestStep1.zip"
+        }
+      }
+    },
+    "SolrLifeCycleTest2": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaExecutionRole", 
+            "Arn"
+          ]
+        },
+        "Handler": "solrTestStep2.lambda_handler",
+        "FunctionName": "SolrLifeCycleTest2",
+        "Runtime": "python2.7",
+        "Timeout": "20",
+        "VpcConfig": {
+          "SecurityGroupIds": [{ "Ref" : "ExistingSG" }],
+          "SubnetIds": [{ "Ref": "ExistingSubnet"}]
+        },
+        "Code": {
+          "S3Bucket": "solrlifecycletest-assets",
+          "S3Key": "solrTestStep2.zip"
+        }
+      }
+    },
+    "SolrLifeCycleTest3": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaExecutionRole", 
+            "Arn"
+          ]
+        },
+        "Handler": "solrTestStep3.lambda_handler",
+        "FunctionName": "SolrLifeCycleTest3",
+        "Runtime": "python2.7",
+        "Timeout": "20",
+        "VpcConfig": {
+          "SecurityGroupIds": [{ "Ref" : "ExistingSG" }],
+          "SubnetIds": [{ "Ref": "ExistingSubnet"}]
+        },
+        "Code": {
+          "S3Bucket": "solrlifecycletest-assets",
+          "S3Key": "solrTestStep3.zip"
+        }
+      }
+    },
+    "SolrLifeCycleTestStateMachine": {
+      "Type": "AWS::StepFunctions::StateMachine",
+      "Properties":{
+        "StateMachineName": "SolrLifeCycleTestStateMachine",
+        "DefinitionString": {
+          "Fn::Join": [
+            "",
+            [
+              "{",
+              " \"Comment\": \"State Machine to test SOLR Life Cycle\",",
+              " \"StartAt\": \"LifeCycleTest1\",",
+              " \"States\": {",
+              "   \"LifeCycleTest1\": {",
+              "     \"Type\": \"Task\",",
+              "     \"Resource\": \"",{ "Fn::GetAtt": [ "SolrLifeCycleTest1", "Arn" ]},"\",",
+              "     \"Next\": \"FirstReplicationDelay\"",
+              "   },",
+              "   \"FirstReplicationDelay\": {",
+              "     \"Type\": \"Wait\",",
+              "     \"Seconds\": ",{"Ref":"ReplicationDelay"},",",
+              "     \"Next\": \"LifeCycleTest2\"",
+              "   },",
+              "   \"LifeCycleTest2\": {",
+              "     \"Type\": \"Task\",",
+              "     \"Resource\": \"",{ "Fn::GetAtt": [ "SolrLifeCycleTest2", "Arn" ]},"\",",
+              "     \"Next\": \"SecondReplicationDelay\"",
+              "   },",
+              "   \"SecondReplicationDelay\": {",
+              "     \"Type\": \"Wait\",",
+              "     \"Seconds\": ",{"Ref":"ReplicationDelay"},",",
+              "     \"Next\": \"LifeCycleTest3\"",
+              "   },",
+              "   \"LifeCycleTest3\": {",
+              "     \"Type\": \"Task\",",
+              "     \"Resource\": \"",{ "Fn::GetAtt": [ "SolrLifeCycleTest3", "Arn" ]},"\",",
+              "     \"End\": true",
+              "   }",
+              " }",
+              "}"
+            ]
+          ]
+        },
+        "RoleArn": { "Fn::GetAtt":[
+          "StepFnExecutionRole",
+          "Arn"
+        ]}
+      }
+    },
+    "SolrLifeCycleTestScheduler": {
+      "Type": "AWS::Events::Rule",
+      "Properties":{
+        "Description": "Solr LifeCycle Test Scheduler",
+        "ScheduleExpression": { "Fn::Join": [
+          "",
+          [
+            "rate(",
+            { "Ref": "SolrTestSchedule"},
+            " minutes)"
+          ]
+        ]},
+        "State": "ENABLED",
+        "Targets": [{
+          "Arn": { "Ref": "SolrLifeCycleTestStateMachine"},
+          "Input": {
+            "Fn::Join":[
+              "",
+              [
+                "{",
+                "\"slaveAsgName\": \"",{ "Ref": "ExistingQueryASGName"},"\",",
+                "\"snsTopic\": \"",{ "Ref": "SNSTopicArn"},"\",",
+                "\"masterURL\": \"",{ "Ref": "SOLRMaster"},"\",",
+                "\"slaveElbURL\": \"",{ "Ref": "ExistingSOLRQueryELB"},"\"",
+                "}",
+              ]
+            ]
+          },
+          "Id": "SolrStateMachineTarget",
+          "RoleArn": { "Fn::GetAtt":[
+            "CloudWatchEventRole",
+            "Arn"
+          ]}
+        }]
+      }
+    }
+  },
+  "Outputs" : {
+    
+  }
+}
